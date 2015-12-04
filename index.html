@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>D3: Transitioning to randomized data values</title>
+		<script type="text/javascript" src="../d3/d3.v3.js"></script>
+		<style type="text/css">
+			/* No style rules here yet */
+		</style>
+	</head>
+	<body>
+		<script type="text/javascript">
+
+      var w = 500;
+      var h = 150;
+
+      var dataset = [1, 2, 3, 4, 5, 6];
+      // for(var j, x, i = dataset.length; i; j = Math.floor(Math.random() * i),
+      //   x = dataset[--i], dataset[i] = dataset[j], dataset[j] = x);
+
+      function draw() {
+
+      }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      var svg = d3.select("body")
+        .append("svg")
+        .attr("width", w)
+        .attr("height", h);
+
+      var text = svg.selectAll("text")
+        .data(dataset)
+        .enter()
+        .append("text")
+        .text(function(d) { return d; })
+        .style("font", "bold 48px monospace")
+        .attr("x", function(d, i) { return i * 36; })
+        .attr("y", 50)
+
+    swap(text)
+    function swap(oldArray) {
+      var indices = [2, 4];
+      oldArray.style("fill", function(d, i) {
+        return indices.indexOf(i) > -1 ? "red" : "#aaa";
+      });
+      oldArray.transition()
+        .duration(200)
+        .attr("y", function(d, i) { return indices.indexOf(i) > -1 ? 100 : 50; })
+        .transition()
+        .duration(200)
+        .attr("x", function(d, i) {
+          if (indices.indexOf(i) > -1) {
+            return indices.indexOf(i) === 0 ? indices[1] * 36 : indices[0] * 36;
+          }
+          else return i * 36;
+        })
+        .transition()
+        .duration(200)
+        .attr("y", 50);
+
+    }
+
+    // setInterval(function() { swap(text); }, 1500);
+
+    // setInterval(function() { update(); }, )
+
+      // var text = svg.selectAll("text")
+      //   .data([1, 2, 5, 4, 3, 6])
+      //   .enter()
+      //   .append("text")
+      //   .text(function(d) { return d; })
+      //   .style({
+      //     "font": "bold 48px monospace",
+      //     "fill": "#666"
+      //   })
+      //   .attr("x", function(d, i) { return i * 36; })
+      //   .attr("y", 50)
+
+
+		</script>
+	</body>
+</html>
