@@ -1,113 +1,61 @@
-var bandMates =
-[
-   {  "name":"John", "songs":302 },
-   {  "name":"Paul", "songs":300 },
-   {  "name":"George", "songs":231},
-   {  "name":"Pete", "songs":12 }
-];
+var array = [1, 2, 3, 4, 5];
 
+var width = 960,
+    height = 500;
 
-function draw(){
-	var content = d3.select("body").selectAll("div.member")
-        .data(bandMates, function(d){return d.name;});
-  content.order();
+var svg = d3.select("body").append("svg")
+    .attr("width", width)
+    .attr("height", height)
+  .append("g")
+    .attr("transform", "translate(32," + (height / 2) + ")");
 
-  var contentEnter = content.enter()
-    	.append("div")
-	    .classed("member",true);
+function update(data, indices) {
 
-  contentEnter
-      .append("div")
-      .text(function(d) { return d.name; });
+  // DATA JOIN
+  // Join new data with old elements, if any.
+  var text = svg.selectAll("text")
+      .data(data, function(d) { return d; });
 
+  // UPDATE
+  // Update old elements as needed.
+  text.attr("class", "update")
+    .style("fill", function(d, i) { return indices.indexOf(i) == -1 ? "#666" : "red" })
+    .transition()
+      .attr("y", function(d, i) { return indices.indexOf(i) == -1 ? 0 : 50 })
+    .transition()
+      .attr("x", function(d, i) { return i * 32; })
+    .transition()
+      .attr("y", 0);
 
-  contentEnter
-      .append("div")
-      .text(function(d) { return "wrote " + d.songs + " songs!"; });
+  // ENTER
+  // Create new elements as needed.
+  text.enter().append("text")
+      .attr("class", "enter")
+      .attr("dy", ".35em")
+      .attr("x", function(d, i) { return i * 32; })
+      .text(function(d) { return d; })
+      .attr("y", 0)
+      .style("fill-opacity", 1);
 
-  content.exit().remove();
-
+  // EXIT
+  // Remove old elements as needed.
+  text.exit()
+      .attr("class", "exit")
+    .transition()
+      .attr("y", 60)
+      .style("fill-opacity", 1e-6)
+      .remove();
 }
 
-draw();
+var indices = [1, 3];
+// The initial display.
+update(array, indices);
 
-setTimeout(function() {
-    bandMates = [
-       {  "name":"Paul", "songs":300 },
-       {  "name":"John", "songs":302 },
-       {  "name":"George", "songs":231},
-       {  "name":"Ringo", "songs":131 }
-    ];
-    draw();
-}, 2000);
-
-
-// var w = 500;
-// var h = 150;
-//
-// var dataset = [1, 2, 3, 4, 5, 6];
-//
-//
-// var svg = d3.select("body")
-//   .append("svg")
-//   .attr("width", w)
-//   .attr("height", h);
-//
-//
-//
-//
-// function swap() {
-//
-//
-//   var text = svg.selectAll("text")
-//     .data(dataset)
-//   text.enter()
-//     .append("text")
-//     .text(function(d) { return d; })
-//     .style("font", "bold 48px monospace")
-//     .attr("x", function(d, i) { return i * 36; })
-//     .attr("y", 50)
-//
-//
-//
-//
-//   var indices = [2, 4];
-//   text.order();
-//   text.exit().remove();
-//   text.style("fill", function(d, i) {
-//     return indices.indexOf(i) > -1 ? "red" : "#aaa";
-//   });
-//   text.transition()
-//     .attr("y", function(d, i) { return indices.indexOf(i) > -1 ? 100 : 50; })
-//     .transition()
-//     .attr("x", function(d, i) {
-//       if (indices.indexOf(i) > -1) {
-//         return indices.indexOf(i) === 0 ? indices[1] * 36 : indices[0] * 36;
-//       }
-//       else return i * 36;
-//     })
-//     .transition()
-//     .attr("y", 50)
-//
-//     var news = d3.selectAll('text')
-//       .data(dataset)
-//       .order()
-//       .exit()
-//       .transition()
-//       .delay(2000)
-//       .remove();
-//
-//   console.log(news);
-// }
-//
-//
-// swap();
-//
-// var i = 0;
-//
-// setInterval(function() {
-//   if (i % 2 === 0) {dataset = [1, 2, 5, 4, 3, 6]; }
-//   else { dataset = []; };
-//   swap();
-//   i++;
-// }, 4000);
+// Grab a random sample of letters from the array, in arrayical order.
+setInterval(function() {
+  if (array[3] == 4) { array = [1, 4, 3, 2, 5]; indices = [1, 3]; }
+  else if (array[3] == 2) { array = [2, 4, 3, 1, 5]; indices = [0, 3]; }
+  else if (indices[0] == 0) { array = [2, 4, 3, 1, 5]; indices = [1, 2]; }
+  else { array = [1, 2, 3, 4, 5]; indices = [1, 3]}
+  update(array, indices);
+}, 1500);
