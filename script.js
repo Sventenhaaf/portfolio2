@@ -47,15 +47,49 @@ function update(data, indices) {
       .remove();
 }
 
-var indices = [1, 3];
-// The initial display.
-update(array, indices);
+var a = [3, 1, 6, 2, 0, 9, 8, 5, 4, 7];
 
-// Grab a random sample of letters from the array, in arrayical order.
+var swapped = true;
+var i = 0;
+var indices = [0, 1];
+update(a, indices);
+
 setInterval(function() {
-  if (array[3] == 4) { array = [1, 4, 3, 2, 5]; indices = [1, 3]; }
-  else if (array[3] == 2) { array = [2, 4, 3, 1, 5]; indices = [0, 3]; }
-  else if (indices[0] == 0) { array = [2, 4, 3, 1, 5]; indices = [1, 2]; }
-  else { array = [1, 2, 3, 4, 5]; indices = [1, 3]}
-  update(array, indices);
-}, 1500);
+  if (a[i] > a[i+1]) {
+    var temp = a[i];
+    a[i] = a[i+1];
+    a[i+1] = temp;
+    swapped = true;
+  }
+  indices = [i, i+1];
+  update(a, indices);
+  if (i > a.length - 3 && swapped) {
+    i = 0;
+    swapped = false;
+   }
+  else { i++ };
+}, 750);
+
+
+
+
+
+//
+// function bubbleSort(a)
+// {
+//     var swapped;
+//     do {
+//         swapped = false;
+//         for (var i=0; i < a.length-1; i++) {
+//             if (a[i] > a[i+1]) {
+//                 var temp = a[i];
+//                 a[i] = a[i+1];
+//                 a[i+1] = temp;
+//                 swapped = true;
+//             }
+//         }
+//     } while (swapped);
+// }
+//
+// bubbleSort(a);
+// console.log(a);
