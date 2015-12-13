@@ -32,70 +32,87 @@ function update(data, indices) {
 
 
 var arr = [6, 5, 7, 4, 9, 3, 8, 1, 2];
-var indices = [0, 1];
+var indicesOld = [0, 1];
+var indicesNew = [0, 1];
 
-update(arr, indices);
+update(arr, indicesOld);
 
 function qsort(arr, ret)
 {
     var stack = [arr];
     var sorted = [];
     var intervalId = 0;
+    var i = 1;
+    var busy = false;
+    var temp = arr.slice();
+    var left = [], right = [];
+    var side;
 
     intervalId = setInterval(function() {
-        if (stack.length) {
-            var temp = stack.pop(), tl = temp.length;
-
-            if (tl == 1) {
-                sorted.push(temp[0]);
-                return;
-            }
-            var pivot = temp[0];
-            var left = [], right = [];
-
-            for (var i = 1; i < tl; i++) {
-
-              var tot = [];
-              tot = tot.concat(sorted);
-              tot = tot.concat(left);
-              indices[0] = tot.length;
-              tot.push(pivot);
-              tot = tot.concat(right);
-              indices[1] = tot.length;
-              tot = tot.concat(temp.slice(i));
-              for (var id = stack.length - 1; id >= 0; id--) {
-                tot = tot.concat(stack[id]);
-              }
-
-              update(tot, indices);
-              console.log(tot, indices);
-                if (temp[i] < pivot) {
-                    left.push(temp[i]);
-                } else {
-                    right.push(temp[i]);
-                }
-            }
-
-            left.push(pivot);
-
-            if (right.length)
-                stack.push(right);
-            if (left.length)
-                stack.push(left);
-            // custom code - - - - - -
-            var current = [];
-            for(var idx = 0; idx < stack.length; idx++) {
-              current = current.concat(stack[idx]);
-            }
-            var total = sorted.concat(current);
-          // end of custom code - - - - - - -
+      if (stack.length || busy) {
+        console.log("tl");
+        if(typeof tl !== "undefined") console.log(tl);
+        if(busy) { }
+        else {
+          temp = stack.pop(), tl = temp.length;
+          busy = true;
         }
-        else if (sorted.length == arr.length) {
-            clearInterval(intervalId);
-            ret(sorted);
-            // console.log(sorted);
+        var pivot = temp[0];
+
+        // make the array and indices that go into the update function - - - - -
+        var tot = [];
+        tot = tot.concat(sorted);
+        tot = tot.concat(left);
+        indicesOld = indicesNew.slice();
+        indicesNew[0] = tot.length;
+        tot.push(pivot);
+        tot = tot.concat(right);
+        indicesNew[1] = tot.length;
+        tot = tot.concat(temp.slice(i));
+        for (var id = stack.length - 1; id >= 0; id--) {
+          tot = tot.concat(stack[id]);
         }
-    }, 4750);
+        update(tot, indicesOld);
+
+
+        if (tl == 1) {
+          sorted.push(temp[0]);
+          i = 1;
+          busy = false;
+          return;
+        }
+
+
+
+        else if (i < tl) {
+          if (temp[i] < pivot) {
+            left.push(temp[i]);
+            indicesNew[0] += 1;
+            indicesNew[1] = indicesNew[0] - 1;
+          } else {
+            right.push(temp[i]);
+            indicesNew[1] = indicesNew[0] + right.length;
+          }
+          i++;
+        }
+        else {
+          left.push(pivot);
+
+          if (right.length)
+              stack.push(right);
+          if (left.length)
+              stack.push(left);
+          i = 1;
+          left = []; right = [];
+          busy = false;
+        }
+      }
+      else if (sorted.length == arr.length) {
+          clearInterval(intervalId);
+          ret(sorted);
+          // console.log(sorted);
+      }
+    }, 750);
 }
 
 
