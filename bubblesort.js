@@ -1,16 +1,16 @@
 (function() {
 
   var arr = [];
-  for (var idxx = 0; idxx < 80; idxx++) { arr.push(idxx); }
+  for (var idxx = 0; idxx < 10; idxx++) { arr.push(idxx); }
 
   for(var j, x, i = arr.length; i; j = Math.floor(Math.random() * i),
     x = arr[--i], arr[i] = arr[j], arr[j] = x);
   // Using D3 making an update function for a step in sorting algorithm
   var width = 1600,
       height = 250,
-      stepDuration = 50;
+      stepDuration = 120;
   if (Math.max.apply(null, arr) < 10) {
-    var charSize = width / (1.5 * arr.length);
+    var charSize = Math.min(width / (1.5 * arr.length), 48);
     var dx = charSize;
   }
   else {
@@ -25,8 +25,9 @@
       .style("font", "bold " + 1.5*charSize + "px monospace")
       .attr("transform", "translate(32," + (height / 2) + ")");
 
+var counterzz = 0;
   function update(data, indices) {
-
+    console.log("bubbles: " + ++counterzz);
     var text = svg.selectAll("text")
         .data(data, function(d) { return d; });
 
@@ -72,7 +73,7 @@
       clearInterval(myInterval);
       update(arr, [arr.length + 1, arr.length + 2])
     }
-  }, 3 * stepDuration);
+  }, 3 * stepDuration + 2.5);
 
 
 })();
