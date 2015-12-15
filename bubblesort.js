@@ -8,7 +8,7 @@
   // Using D3 making an update function for a step in sorting algorithm
   var width = 1600,
       height = 250,
-      stepDuration = 120;
+      stepDuration = 250;
   if (Math.max.apply(null, arr) < 10) {
     var charSize = Math.min(width / (1.5 * arr.length), 48);
     var dx = charSize;
