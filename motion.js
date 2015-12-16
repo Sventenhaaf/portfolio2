@@ -1,26 +1,28 @@
 // System Settings
-var stiffness = 0.02;
-// var damping = 4;
-// var mass = 10;
+var stiffness   = 0.02; // spring stiffness
+var damping     = 0.02; // system damping
+var mass        = 10;   // mass of ball
 
 // Representation settings
-var totalWidth = 1300;
-var totalHeight = 500;
-var timeStep  = 20;
-var offsetX   = 60;
-var offsetY   = 150;
-var ntrHeight = 250;
-var t         = 0;
-var data      = [];
+var totalWidth  = 1300; // total width of screen
+var totalHeight = 500;  // total height of screen
+var timeStep    = 20;   // time step between each calculation
+var offsetX     = 60;   // distance system is from right edge
+var offsetY     = 150;  // distance system is from ceiling
+var ntrHeight   = 250;  // height at which spring force is 0
+var t           = 0;    // initial setting of time variable t
+var data        = [];   // initial setting of data array to represent line graph
+var timeScale   = 10;   // scale with which time is projected to x direction
+var margin = {top: 20, right: 20, bottom: 20, left: 20}, // setting screen
+    width = totalWidth - margin.left - margin.right,
+    height = totalHeight - margin.top - margin.bottom;
 
 // Boundary conditions
 var velocity  = 0;
 // var startPosition = 1;
 
 
-var margin = {top: 20, right: 20, bottom: 20, left: 20},
-    width = totalWidth - margin.left - margin.right,
-    height = totalHeight - margin.top - margin.bottom;
+
 
 var svg = d3.select(".motion").append("svg")
   .attr("width", width + margin.left + margin.right)
@@ -30,6 +32,8 @@ var svg = d3.select(".motion").append("svg")
   .style("display", "flex")
   .style("align-items", "center")
   .style("justify-content", "center")
+
+// var controlPanel = d3.select(.motion).append("svg")
 
 var startSquare = svg
   .append("rect")
@@ -77,6 +81,7 @@ var lineGraph = svg.append("path")
   .attr("stroke", "blue")
   .attr("stroke-width", 2)
   .attr("fill", "none")
+  .style("stroke-dasharray", "5, 5")
 
 
 // - - OTHER CODE - -
@@ -100,6 +105,8 @@ function stopAnimation() {
 function setNewY() {
   var y = parseFloat(document.getElementById("ball").getAttribute("cy"));
   y += velocity;
+  velocity -= damping * velocity;
+  console.log(velocity)
   velocity -= stiffness * (y - ntrHeight - offsetX);
   return y;
 }
@@ -118,7 +125,7 @@ function setNewColor() {
 function addData() {
   data.push({
     "y": parseFloat(document.getElementById("ball").getAttribute("cy")),
-    "t": t
+    "t": t / timeScale
   });
   t += timeStep;
 }
@@ -130,9 +137,26 @@ function animate() {
   var y = setNewY(),
       newColor = setNewColor();
   addData();
-  lineGraph.attr("d", lineFunction(data))
+  lineGraph
+    .attr("d", lineFunction(data))
+    .attr("transform",
+              "translate(" +  (totalWidth - margin.left - margin.right - offsetX - (t / timeScale)) + ",0)");
 
   spring.setAttribute("y2", y);
   spring.setAttribute("stroke", newColor);
   circle.setAttribute("cy", y);
 }
+
+
+// TODOS
+// Control Panel below the svg Panel
+//    OPTIONS:
+//    - System props: Mass, spring stiffness, damping, ...
+//    - Time settings: How to scale t to x, moment to stop simulation, ...
+//    - graph settings: line dashes and colors, show velocity and / or acceleration
+//    - plotting other stuff - eigenfrequency, bode plot, etc
+//    -
+// show eigenfrequency, bode plot etc at simulation
+// external (resonating) force
+// SI Units
+// axis and scales
