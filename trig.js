@@ -18,14 +18,8 @@
     xScale  = d3.scale.linear(),
     yScale  = d3.scale.linear(),
     vis     = d3.select(ID_TRIG).append('svg:svg'),
-    decor   = vis.append('svg:g'),
     graph   = vis.append('svg:g'),
     path    = graph.append('svg:path'),
-    b       = graph.append('svg:line'),
-    c       = graph.append('svg:line'),
-    circle  = graph.append('svg:circle'),
-    dot     = graph.append('svg:circle'),
-    label   = graph.append('svg:text'),
     sine    = d3.svg.line(),
     time    = 0,
     i;
@@ -33,7 +27,6 @@
   for (i = 0; i < 84; i++) {
     data.push(i * 10 / 84);
   }
-  console.log(data);
   xScale
     .domain([xmin, xmax])
     .range([0, width]);
@@ -51,88 +44,56 @@
     .x(function (d, i) { return xScale(d); })
     .y(function (d, i) { return yScale(Math.sin(d - time)); });
 
-  // X-Axis
-  decor.append('svg:line')
-    .attr('class', 'axis')
-    .attr(X1, xScale(xmin))
-    .attr(Y1, yScale(0))
-    .attr(X2, xScale(xmax))
-    .attr(Y2, yScale(0));
-
-  decor.append('svg:line')
-    .attr('class', 'axis')
-    .attr(X1, xScale(Math.PI))
-    .attr(Y1, yScale(0))
-    .attr(X2, xScale(Math.PI))
-    .attr(Y2, yScale(0) + 8);
-
-  decor.append("svg:text")
-    .text(String.fromCharCode(960))
-    .attr("x", Math.round(xScale(Math.PI)))
-    .attr("y", (yScale(0)) + 24)
-    .attr("text-anchor", "middle");
-
-  // Y-Axis
-  decor.append('svg:line')
-    .attr('class', 'axis')
-    .attr(X1, xScale(0))
-    .attr(Y1, yScale(ymin))
-    .attr(X2, xScale(0))
-    .attr(Y2, yScale(ymax));
-
-  // Time
-  label
-    .attr("x", 2)
-    .attr("y", 24);
-
-  // Circle
-  circle
-    .attr('cx', xScale(0))
-    .attr('cy', yScale(0))
-    .attr('r', xScale(1) - xScale(0));
-
-  // Dot
-  dot
-    .attr('cx', xScale(0))
-    .attr('r', 4)
-    .style('fill', '#fff');
-
-  // Triangle
-  c
-    .attr(X1, xScale(0))
-    .attr(Y1, yScale(0));
-
   function draw() {
-
-    // console.log(data);
-    // console.log(sine.x(i));
-    var
-      x = xScale(Math.cos(time)),
-      y = yScale(-Math.sin(time));
-
     path
       .attr('d', sine(data));
-
-    label
-      .text('t = '+ Math.floor(time / Math.PI));
-
-    c
-      .attr(X2, x)
-      .attr(Y2, y);
-
-    b
-      .attr(X1, xScale(0))
-      .attr(Y1, y)
-      .attr(X2, x)
-      .attr(Y2, y);
-
-    dot
-      .attr('cy', y);
-
+      console.log(sine(data));
     time += .015;
+    // console.log(data[data.length - 1]);
 
     setTimeout(draw, 35);
   }
   draw();
 
 })();
+
+
+// - - - - - - - - -
+
+var time = 0;
+
+
+
+//The data for our line
+ var lineData = [ { "x": 1,   "y": 5},  { "x": 20,  "y": 20},
+                  { "x": 40,  "y": 10}, { "x": 60,  "y": 40},
+                  { "x": 80,  "y": 5},  { "x": 100, "y": 60}];
+
+ //This is the accessor function we talked about above
+ var lineFunction = d3.svg.line()
+                          .x(function(d) { return d.x * time; })
+                          .y(function(d) { return d.y * time; })
+                         .interpolate("linear");
+
+//The SVG Container
+var svgContainer = d3.select("body").append("svg")
+                                    .attr("width", 200)
+                                    .attr("height", 200);
+
+//The line SVG Path we draw
+var lineGraph = svgContainer.append("path");
+
+lineGraph
+                            .attr("d", lineFunction(lineData))
+                            .attr("stroke", "blue")
+                            .attr("stroke-width", 2)
+                            .attr("fill", "none");
+
+                            function ddd() {
+                              lineGraph
+                                .attr('d', lineFunction(lineData));
+                              time += .015;
+
+                              setTimeout(ddd, 35);
+                            }
+                            ddd();

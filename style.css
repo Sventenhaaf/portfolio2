@@ -37,3 +37,9 @@
   font-family:sans-serif;
   font-size:22
 }
+
+#test {
+  fill: none;
+  stroke: steelblue;
+  stroke-width: 3;
+}
