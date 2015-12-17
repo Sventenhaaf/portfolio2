@@ -1,10 +1,9 @@
-// Unit settings
-var excitation  = 1;    // excitation       [m]
-var mass        = 10;   // mass             [kg]
-
-// System Settings
-var stiffness   = 0.0040;   // spring stiffness [kg/s^2]
-var damping     = 0;    // system damping   [kg/s]
+// Unit and system settings
+var excitation  = -1;    // initial excitation       [m]
+var velocity    = 0;    // initial velocity         [m/s]
+var mass        = 1;   // mass             [kg]
+var stiffness   = 20;   // spring stiffness [kg/s^2]
+var damping     = 1.5;    // system damping   [kg/s]
 
 // Representation settings
 var totalWidth  = 1300; // total width of screen
@@ -14,18 +13,19 @@ var stgHeight   = 300;  // total height of settings screen
 var margin      = {top: 20, right: 20, bottom: 20, left: 20}; // setting screen
     width       = totalWidth - margin.left - margin.right,
     height      = mtnHeight - margin.top - margin.bottom;
-var timeStep    = 20;   // time step between each calculation
+var timeStep    = 20;   // time step between each calculation [ms]
 var offsetX     = 50;   // distance system is from right edge
-var offsetY     = 0;  // distance system is from ceiling
-var ntrHeight   = 150;  // height at which spring force is 0
+var offsetY     = 50;  // distance system is from ceiling
+var ntrHeight   = 250;  // height at which spring force is 0
 var t           = 0;    // initial setting of time variable t
 var data        = [];   // initial setting of data array to represent line graph
 var timeScale   = 10;   // scale with which time is projected to x direction
 
-
+var scale       = ntrHeight - offsetY;
 // Boundary conditions
-var velocity  = 0;
 // var startPosition = 1;
+
+
 
 var svg = d3.select(".motion").append("svg")
   .attr("width", totalWidth)
@@ -82,13 +82,13 @@ var spring = svg.append("line")
   .attr("x1", width - offsetX)
   .attr("y1", 0)
   .attr("x2", width - offsetX)
-  .attr("y2", offsetY)
+  .attr("y2", scale*excitation + ntrHeight)
   .attr("stroke-width", 2)
   .attr("stroke", "rgb(255, 0, 0)")
   .attr("id", "spring")
 
 var circle = svg.append("circle")
-  .attr("cy", offsetY)
+  .attr("cy", scale*excitation + ntrHeight)
   .attr("cx", width - offsetX)
   .attr("r", 20)
   .attr("id", "ball")
@@ -128,21 +128,21 @@ function stopAnimation() {
 }
 
 function setNewY() {
-  var y = parseFloat(document.getElementById("ball").getAttribute("cy"));
-  y += velocity;
-  velocity -= damping * velocity;
-  velocity -= stiffness * (y - ntrHeight - offsetX);
-  console.log(y);
-  return y;
+  excitation += velocity * timeStep / 1000;
+  velocity -= damping * velocity * timeStep / (1000 * mass);
+  velocity -= stiffness * excitation * timeStep / (1000 * mass);
+
+  // data.push()
+  return scale*excitation + ntrHeight;
 }
 
 function setNewColor() {
-  var y = parseFloat(document.getElementById("ball").getAttribute("cy"));
+  var cy = parseFloat(document.getElementById("ball").getAttribute("cy"));
   var totalStroke = 2 * ntrHeight;
   var newColor = "rgb("
-    + parseInt(255 - (y-offsetX)*255/totalStroke)
+    + parseInt(255 - cy*255/totalStroke)
     + ", 0, "
-    + parseInt((y-offsetX) * 255 / totalStroke)
+    + parseInt(cy * 255 / totalStroke)
     + ")" ;
   return newColor;
 }
