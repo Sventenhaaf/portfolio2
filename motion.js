@@ -2,8 +2,8 @@
 var excitation  = -1;    // initial excitation       [m]
 var velocity    = 0;    // initial velocity         [m/s]
 var mass        = 1;   // mass             [kg]
-var stiffness   = 20;   // spring stiffness [kg/s^2]
-var damping     = 1.5;    // system damping   [kg/s]
+var stiffness   = 40;   // spring stiffness [kg/s^2]
+var damping     = 1;    // system damping   [kg/s]
 
 // Representation settings
 var totalWidth  = 1300; // total width of screen
@@ -15,18 +15,21 @@ var margin      = {top: 20, right: 20, bottom: 20, left: 20}; // setting screen
     height      = mtnHeight - margin.top - margin.bottom;
 var timeStep    = 20;   // time step between each calculation [ms]
 var offsetX     = 50;   // distance system is from right edge
-var offsetY     = 50;  // distance system is from ceiling
+var offsetY     = 50;   // distance system is from ceiling
 var ntrHeight   = 250;  // height at which spring force is 0
 var t           = 0;    // initial setting of time variable t
 var data        = [];   // initial setting of data array to represent line graph
-var timeScale   = 10;   // scale with which time is projected to x direction
+var timeScale   = 100;  // scale with which time is projected to x direction
 
+// Prep work
 var scale       = ntrHeight - offsetY;
-// Boundary conditions
-// var startPosition = 1;
+var start       = new Date().getTime();
+var stopTime    = new Date().getTime();
+var waited      = new Date().getTime() - stopTime;
+var diff        = 0;
+var stopAnim    = false;
 
-
-
+// Initialize the figures on the screen
 var svg = d3.select(".motion").append("svg")
   .attr("width", totalWidth)
   .attr("height", mtnHeight)
@@ -49,16 +52,16 @@ var controlPanel = d3.select(".controlPanel").append("svg")
     "border"          : "1px solid black"
   })
 
-  var settings = d3.select(".settings").append("svg")
-    .attr("width", totalWidth)
-    .attr("height", stgHeight)
-    .style({
-      "display"         : "block",
-      "margin"          : "auto",
-      "align-items"     : "center",
-      "justify-content" : "center",
-      "border"          : "1px solid black"
-    })
+var settings = d3.select(".settings").append("svg")
+  .attr("width", totalWidth)
+  .attr("height", stgHeight)
+  .style({
+    "display"         : "block",
+    "margin"          : "auto",
+    "align-items"     : "center",
+    "justify-content" : "center",
+    "border"          : "1px solid black"
+  })
 
 var startSquare = controlPanel
   .append("rect")
@@ -77,7 +80,6 @@ var stopSquare = controlPanel.append("rect")
   .attr("onclick", "stopAnimation()")
   .style("fill", "#666")
 
-
 var spring = svg.append("line")
   .attr("x1", width - offsetX)
   .attr("y1", 0)
@@ -94,11 +96,9 @@ var circle = svg.append("circle")
   .attr("id", "ball")
   .style("fill", "cornflowerblue");
 
-
-// - - GRAPH - - - -
 var lineFunction = d3.svg.line()
-  .x(function(d) { return d.t; })
-  .y(function(d) { return d.y; })
+  .x(function(d) { return d.t * timeScale; })
+  .y(function(d) { return d.y * scale + ntrHeight; })
   .interpolate("linear");
 
 var lineGraph = svg.append("path")
@@ -108,31 +108,34 @@ var lineGraph = svg.append("path")
   .attr("fill", "none")
   // .style("stroke-dasharray", "5, 15")
 
-
-// - - OTHER CODE - -
-
-var timerFunction = null;
-var i = 0;
-
+// Animation functions
 function startAnimation() {
-  if(timerFunction == null) {
-    timerFunction = setInterval(animate, timeStep);
-  }
+  waited += new Date().getTime() - stopTime
+  stopAnim = false;
+  Animation();
+}
+
+function Animation() {
+  diff = new Date().getTime() - start - (t * 1000) - waited;
+  animate();
+  if (!stopAnim) { window.setTimeout(Animation, timeStep - diff); }
 }
 
 function stopAnimation() {
-  if(timerFunction != null){
-    clearInterval(timerFunction);
-    timerFunction = null;
-  }
+  stopTime = new Date().getTime();
+  stopAnim = true;
 }
 
 function setNewY() {
   excitation += velocity * timeStep / 1000;
-  velocity -= damping * velocity * timeStep / (1000 * mass);
-  velocity -= stiffness * excitation * timeStep / (1000 * mass);
+  velocity -= (stiffness * excitation * timeStep / (1000 * mass)) + (damping * velocity * timeStep / (1000 * mass));
+  // velocity -= ;
 
-  // data.push()
+  data.push({
+    "y": excitation,
+    "t": t
+  });
+  t += timeStep / 1000;
   return scale*excitation + ntrHeight;
 }
 
@@ -147,25 +150,15 @@ function setNewColor() {
   return newColor;
 }
 
-function addData() {
-  data.push({
-    "y": parseFloat(document.getElementById("ball").getAttribute("cy")),
-    "t": t / timeScale
-  });
-  t += timeStep;
-}
-
-
 function animate() {
   var spring = document.getElementById("spring");
   var circle = document.getElementById("ball");
   var y = setNewY(),
       newColor = setNewColor();
-  addData();
   lineGraph
     .attr("d", lineFunction(data))
     .attr("transform",
-              "translate(" +  (totalWidth - margin.left - margin.right - offsetX - (t / timeScale)) + ",0)");
+              "translate(" +  (totalWidth - margin.left - margin.right - offsetX - (t * timeScale)) + ",0)");
 
   spring.setAttribute("y2", y);
   spring.setAttribute("stroke", newColor);
