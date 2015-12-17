@@ -1,11 +1,8 @@
-.motion {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  /* bring your own prefixes */
-  transform: translate(-50%, -50%);
-  border: 1px solid black;
+div {
+  position: relative;
+  /*border: 1px solid black;*/
 }
+div div { position: absolute; top: 0; left: 0; }
 
 .enter {
   fill: cornflowerblue;
