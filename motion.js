@@ -1,9 +1,9 @@
 // Unit and system settings
 var excitation  = -1;    // initial excitation       [m]
 var velocity    = 0;    // initial velocity         [m/s]
-var mass        = 1;   // mass             [kg]
-var stiffness   = 40;   // spring stiffness [kg/s^2]
-var damping     = 1;    // system damping   [kg/s]
+var mass        = 10;   // mass             [kg]
+var stiffness   = 400;   // spring stiffness [kg/s^2]
+var damping     = 10;    // system damping   [kg/s]
 
 // Representation settings
 var totalWidth  = 1300; // total width of screen
@@ -116,7 +116,7 @@ function startAnimation() {
 }
 
 function Animation() {
-  diff = new Date().getTime() - start - (t * 1000) - waited;
+  diff = Math.floor(new Date().getTime() - start - (t * 1000) - waited);
   animate();
   if (!stopAnim) { window.setTimeout(Animation, timeStep - diff); }
 }
@@ -126,9 +126,23 @@ function stopAnimation() {
   stopAnim = true;
 }
 
+// Setting Scales and Axes - Now go put them to use!
+// var xScale = d3.scale.linear()
+// 								 .domain([0, d3.max(data, function(d) { return d[0]; })])
+// 								 .range([padding, w - padding * 2]);
+//
+// 			var yScale = d3.scale.linear()
+// 								 .domain([0, d3.max(data, function(d) { return d[1]; })])
+// 								 .range([h - padding, padding]);
+
+// Actions
 function setNewY() {
   excitation += velocity * timeStep / 1000;
-  velocity -= (stiffness * excitation * timeStep / (1000 * mass)) + (damping * velocity * timeStep / (1000 * mass));
+  velocity -= ((
+    stiffness * excitation * timeStep / (1000 * mass))
+    +
+    (damping * velocity * timeStep / (1000 * mass)
+  ));
   // velocity -= ;
 
   data.push({
