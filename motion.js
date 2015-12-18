@@ -2,24 +2,28 @@
 var excitation  = -1;    // initial excitation       [m]
 var velocity    = 0;    // initial velocity         [m/s]
 var mass        = 10;   // mass             [kg]
-var stiffness   = 400;   // spring stiffness [kg/s^2]
+var stiffness   = 390;   // spring stiffness [kg/s^2]
 var damping     = 10;    // system damping   [kg/s]
+
+// External force settings
+var fMagnitude  = 0;   // Ext force Amplitude      [N]
+var frequency   = 1;   // Ext force frequency      [Hz]
 
 // Representation settings
 var totalWidth  = 1300; // total width of screen
 var ctrlHeight  = 50;   // total height of control panel
 var mtnHeight   = 500;  // total height of motion simulation screen
 var stgHeight   = 300;  // total height of settings screen
-var margin      = {top: 20, right: 20, bottom: 20, left: 20}; // setting screen
-    width       = totalWidth - margin.left - margin.right,
-    height      = mtnHeight - margin.top - margin.bottom;
+// var margin      = {top: 20, right: 20, bottom: 20, left: 20}; // setting screen
+//     width       = totalWidth - margin.left - margin.right,
+//     height      = mtnHeight - margin.top - margin.bottom;
 var timeStep    = 20;   // time step between each calculation [ms]
 var offsetX     = 50;   // distance system is from right edge
 var offsetY     = 50;   // distance system is from ceiling
 var ntrHeight   = 250;  // height at which spring force is 0
 var t           = 0;    // initial setting of time variable t
 var data        = [];   // initial setting of data array to represent line graph
-var timeScale   = 100;  // scale with which time is projected to x direction
+var timeScale   = 300;  // scale with which time is projected to x direction
 
 // Prep work
 var scale       = ntrHeight - offsetY;
@@ -52,6 +56,7 @@ var controlPanel = d3.select(".controlPanel").append("svg")
     "border"          : "1px solid black"
   })
 
+
 var settings = d3.select(".settings").append("svg")
   .attr("width", totalWidth)
   .attr("height", stgHeight)
@@ -81,9 +86,9 @@ var stopSquare = controlPanel.append("rect")
   .style("fill", "#666")
 
 var spring = svg.append("line")
-  .attr("x1", width - offsetX)
+  .attr("x1", totalWidth - offsetX)
   .attr("y1", 0)
-  .attr("x2", width - offsetX)
+  .attr("x2", totalWidth - offsetX)
   .attr("y2", scale*excitation + ntrHeight)
   .attr("stroke-width", 2)
   .attr("stroke", "rgb(255, 0, 0)")
@@ -91,22 +96,10 @@ var spring = svg.append("line")
 
 var circle = svg.append("circle")
   .attr("cy", scale*excitation + ntrHeight)
-  .attr("cx", width - offsetX)
+  .attr("cx", totalWidth - offsetX)
   .attr("r", 20)
   .attr("id", "ball")
   .style("fill", "cornflowerblue");
-
-var lineFunction = d3.svg.line()
-  .x(function(d) { return d.t * timeScale; })
-  .y(function(d) { return d.y * scale + ntrHeight; })
-  .interpolate("linear");
-
-var lineGraph = svg.append("path")
-.attr("d", lineFunction(data))
-  .attr("stroke", "blue")
-  .attr("stroke-width", 2)
-  .attr("fill", "none")
-  // .style("stroke-dasharray", "5, 15")
 
 // Animation functions
 function startAnimation() {
@@ -126,14 +119,64 @@ function stopAnimation() {
   stopAnim = true;
 }
 
-// Setting Scales and Axes - Now go put them to use!
-// var xScale = d3.scale.linear()
-// 								 .domain([0, d3.max(data, function(d) { return d[0]; })])
-// 								 .range([padding, w - padding * 2]);
-//
-// 			var yScale = d3.scale.linear()
-// 								 .domain([0, d3.max(data, function(d) { return d[1]; })])
-// 								 .range([h - padding, padding]);
+
+
+
+  // Setting Scales and Axes - Now go put them to use!
+  var xScale = d3.scale.linear()
+    .domain([0, d3.max(data, function(d) { return d.t; })])
+    .range([totalWidth - offsetX - t * timeScale, totalWidth - offsetX ]); //
+
+  var yScale = d3.scale.linear()
+    // .domain([d3.min(data, function(d) { return d.y; }), d3.max(data, function(d) { return d.y; })])
+    .domain([-1, 1])
+    .range([mtnHeight - offsetY, offsetY]);
+
+  //Define X axis
+  var xAxis = d3.svg.axis()
+    .scale(xScale)
+    .orient("bottom")
+    .ticks(15)
+    .tickSize(-mtnHeight + (2 * offsetY), 0, 0)
+
+  //Define Y axis
+  var yAxis = d3.svg.axis()
+    .scale(yScale)
+    .orient("left")
+    // .ticks(20)
+    .tickSize(-totalWidth + (2 * offsetX), 0, 0)
+
+  //Create X axis
+  svg.append("g")
+    .attr("class", "xAxis")
+    .attr("transform", "translate(0," + (mtnHeight - offsetY) + ")")
+    .call(xAxis);
+
+  //Create Y axis
+  svg.append("g")
+    .attr("class", "yAxis")
+    .attr("transform", "translate(" + (totalWidth - offsetX) + ",0)")
+    .call(yAxis);
+  // draw the line
+  var lineFunction = d3.svg.line()
+    .x(function(d) { return xScale(d.t * 1) ; })            // xScale()
+    .y(function(d) { return d.y * scale + ntrHeight; })    // yScale()
+    .interpolate("linear");
+
+  var lineGraph = svg.append("path")
+  .attr("d", lineFunction(data))
+    .attr("stroke", "blue")
+    .attr("stroke-width", 2)
+    .attr("fill", "none")
+    // .style("stroke-dasharray", "5, 15")
+
+
+function force() {
+  return Math.sin(t*2*Math.PI*frequency)*fMagnitude;
+}
+
+
+
 
 // Actions
 function setNewY() {
@@ -142,6 +185,8 @@ function setNewY() {
     stiffness * excitation * timeStep / (1000 * mass))
     +
     (damping * velocity * timeStep / (1000 * mass)
+    +
+    force()
   ));
   // velocity -= ;
 
@@ -164,21 +209,48 @@ function setNewColor() {
   return newColor;
 }
 
+
 function animate() {
   var spring = document.getElementById("spring");
   var circle = document.getElementById("ball");
   var y = setNewY(),
       newColor = setNewColor();
-  lineGraph
-    .attr("d", lineFunction(data))
-    .attr("transform",
-              "translate(" +  (totalWidth - margin.left - margin.right - offsetX - (t * timeScale)) + ",0)");
-
   spring.setAttribute("y2", y);
   spring.setAttribute("stroke", newColor);
   circle.setAttribute("cy", y);
+
+  //Update scale domains
+	xScale.domain([0, d3.max(data, function(d) { return d.t; })])
+    .range(xScaleRange());
+
+	svg.select(".xAxis")
+		.call(xAxis);
+  svg.select(".yAxis")
+    .attr("transform", "translate(" + yScaleTransform() + ",0)")
+
+  lineGraph
+    .attr("d", lineFunction(data))
+    // .attr("transform", "translate(" +  yScaleTransform() + ",0)");
+
 }
 
+function yScaleTransform() {
+  if (totalWidth - (2 * offsetX) > t * timeScale) {
+    return totalWidth - (t * timeScale) - offsetX;
+  }
+  else {
+    return offsetX;
+  }
+}
+
+function xScaleRange() {
+  if (totalWidth - (2 * offsetX) > t * timeScale) {
+    return [totalWidth - offsetX - t * timeScale, totalWidth - offsetX ];
+  }
+  else {
+    return [offsetX, totalWidth - offsetX];
+  }
+}
 
 // TODOS
 // Control Panel below the svg Panel
@@ -193,3 +265,10 @@ function animate() {
 // SI Units
 // axis and scales
 // pop-up saying: Looks like your system reached steady-state. Do you want to continue?
+// in tijd-settings lijkt nog iets fout te zitten - gedrag wordt anders als ik 1 ms gebruik en als ik 0 ms gebruik werkt de hele app niet...
+
+// LATER
+// Ronde getallen in de array
+// Keep stuff in function scope
+// steady-state recognition
+// transfer function composition

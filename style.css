@@ -40,3 +40,70 @@ div div { position: absolute; top: 0; left: 0; }
   stroke: steelblue;
   stroke-width: 3;
 }
+
+
+
+
+
+/*copied*/
+
+
+svg {
+  font: 10px sans-serif;
+}
+
+path.line {
+  fill: none;
+  stroke: #666;
+  stroke-width: 1.5px;
+}
+
+path.area {
+  fill: #e7e7e7;
+}
+
+.axis {
+  shape-rendering: crispEdges;
+}
+
+.x.axis line {
+  stroke: #fff;
+}
+
+.x.axis .minor {
+  stroke-opacity: .5;
+}
+
+.x.axis path {
+  display: none;
+}
+
+.y.axis line,
+.y.axis path {
+  fill: none;
+  stroke: #000;
+}
+
+.xAxis path,
+.xAxis line,
+.yAxis path,
+.yAxis line {
+    fill: none;
+    stroke: black;
+    /*shape-rendering: crispEdges;*/
+}
+
+.xAxis text,
+.yAxis text {
+    font-family: sans-serif;
+    font-size: 11px;
+}
+
+
+.tick line{
+    stroke: lightgrey;
+    opacity: 0.5;
+}
+/*.grid path {
+      stroke-width: 0;
+}*/
