@@ -1,13 +1,13 @@
 // Unit and system settings
-var excitation  = -1;    // initial excitation       [m]
+var excitation  = 0;    // initial excitation       [m]
 var velocity    = 0;    // initial velocity         [m/s]
 var mass        = 10;   // mass             [kg]
 var stiffness   = 390;   // spring stiffness [kg/s^2]
 var damping     = 10;    // system damping   [kg/s]
 
 // External force settings
-var fMagnitude  = 0;   // Ext force Amplitude      [N]
-var frequency   = 1;   // Ext force frequency      [Hz]
+var fMagnitude  = 0.8;   // Ext force Amplitude      [N]
+var frequency   = 1.1;   // Ext force frequency      [Hz]
 
 // Representation settings
 var totalWidth  = 1300; // total width of screen

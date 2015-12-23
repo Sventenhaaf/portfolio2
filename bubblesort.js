@@ -1,14 +1,14 @@
 (function() {
 
   var arr = [];
-  for (var idxx = 0; idxx < 10; idxx++) { arr.push(idxx); }
+  for (var idxx = 0; idxx < 40; idxx++) { arr.push(idxx); }
 
   for(var j, x, i = arr.length; i; j = Math.floor(Math.random() * i),
     x = arr[--i], arr[i] = arr[j], arr[j] = x);
   // Using D3 making an update function for a step in sorting algorithm
   var width = 1600,
       height = 250,
-      stepDuration = 250;
+      stepDuration = 20;
   if (Math.max.apply(null, arr) < 10) {
     var charSize = Math.min(width / (1.5 * arr.length), 48);
     var dx = charSize;
