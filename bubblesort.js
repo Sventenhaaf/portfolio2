@@ -1,13 +1,15 @@
 (function() {
 
   var arr = [];
-  for (var idxx = 0; idxx < 10; idxx++) { arr.push(idxx); }
+  var arrSize = 10;
+  
+  for (var idxx = 0; idxx < arrSize; idxx++) { arr.push(idxx); }
 
   for(var j, x, i = arr.length; i; j = Math.floor(Math.random() * i),
     x = arr[--i], arr[i] = arr[j], arr[j] = x);
   // Using D3 making an update function for a step in sorting algorithm
   var width = 700,
-      height = 250,
+      height = 200,
       stepDuration = 250;
   if (Math.max.apply(null, arr) < 10) {
     var charSize = Math.min(width / (1.5 * arr.length), 48);
@@ -18,16 +20,14 @@
     var dx = 2.5 * charSize;
   }
 
-  var svg = d3.select(".bubblesort").append("svg")
+  var svg = d3.select("#bubblesort").append("svg")
       .attr("width", width)
       .attr("height", height)
     .append("g")
       .style("font", "bold " + 1.5*charSize + "px monospace")
       .attr("transform", "translate(32," + (height / 2) + ")");
 
-var counterzz = 0;
   function update(data, indices) {
-    console.log("bubbles: " + ++counterzz);
     var text = svg.selectAll("text")
         .data(data, function(d) { return d; });
 
@@ -74,6 +74,29 @@ var counterzz = 0;
       update(arr, [arr.length + 1, arr.length + 2])
     }
   }, 3 * stepDuration + 2.5);
+
+
+
+
+  // when the input range changes update the circle
+  d3.select("#bsarraysize").on("input", function() {
+    updatearray(+this.value);
+  });
+
+  // Initial starting radius of the circle
+  updatearray(10);
+
+  // update the elements
+  function updatearray(nRadius) {
+
+    // adjust the text on the range slider
+    d3.select("#bsarray-value").text(nRadius);
+    d3.select("#bsarray").property("value", nRadius);
+
+    // update the circle radius
+    holder.selectAll("circle")
+      .attr("r", nRadius);
+  }
 
 
 })();

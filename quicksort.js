@@ -18,16 +18,14 @@
     var dx = 2.5 * charSize;
   }
 
-  var svg = d3.select(".quicksort").append("svg")
+  var svg = d3.select("#quicksort").append("svg")
       .attr("width", width)
       .attr("height", height)
     .append("g")
       .style("font", "bold " + 1.5*charSize + "px monospace")
       .attr("transform", "translate(32," + (height / 2) + ")");
 
-var counterzz = 0;
   function update(data, indices) {
-    console.log("quicksort: " + ++counterzz);
     var text = svg.selectAll("text")
         .data(data, function(d) { return d; });
 
