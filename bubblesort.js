@@ -1,12 +1,16 @@
-(function() {
+var newArrSize = 10;
+animate(newArrSize);
+
+function animate(arrSize) {
+  d3.select("#bubblesort").html("");
 
   var arr = [];
-  var arrSize = 10;
-  
-  for (var idxx = 0; idxx < arrSize; idxx++) { arr.push(idxx); }
 
-  for(var j, x, i = arr.length; i; j = Math.floor(Math.random() * i),
-    x = arr[--i], arr[i] = arr[j], arr[j] = x);
+    for (var idxx = 0; idxx < arrSize; idxx++) { arr.push(idxx); }
+
+    for(var j, x, i = arr.length; i; j = Math.floor(Math.random() * i),
+      x = arr[--i], arr[i] = arr[j], arr[j] = x);
+
   // Using D3 making an update function for a step in sorting algorithm
   var width = 700,
       height = 200,
@@ -76,27 +80,46 @@
   }, 3 * stepDuration + 2.5);
 
 
+};
 
 
-  // when the input range changes update the circle
-  d3.select("#bsarraysize").on("input", function() {
-    updatearray(+this.value);
-  });
-
-  // Initial starting radius of the circle
-  updatearray(10);
-
-  // update the elements
-  function updatearray(nRadius) {
-
-    // adjust the text on the range slider
-    d3.select("#bsarray-value").text(nRadius);
-    d3.select("#bsarray").property("value", nRadius);
-
-    // update the circle radius
-    holder.selectAll("circle")
-      .attr("r", nRadius);
-  }
 
 
-})();
+// when the input range changes update the text
+d3.select("#bsarraysize").on("input", function() {
+  updatearray(+this.value);
+});
+
+// Initial starting text
+updatearray(10);
+
+// update the elements
+function updatearray(arrSize) {
+  // adjust the text on the range slider
+  d3.select("#bsarray-value").text(arrSize);
+  d3.select("#bsarraysize").property("value", arrSize);
+  console.log(arrSize);
+  newArrSize = arrSize;
+}
+
+
+// when the input range changes update the text
+d3.select("#bsspeed").on("input", function() {
+  updatespeed(+this.value);
+});
+
+// Initial starting text
+updatespeed(250);
+
+// update the elements
+function updatespeed(calcSpeed) {
+  // adjust the text on the range slider
+  d3.select("#bsspeed-value").text(calcSpeed);
+  d3.select("#bsspeed").property("value", calcSpeed);
+  console.log(calcSpeed);
+}
+
+
+function startAnimation() {
+  animate(newArrSize);
+}
