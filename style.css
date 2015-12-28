@@ -1,6 +1,132 @@
+/*MAIN CSS*/
+
+body {
+  font-family: Delicious; src: url('Delicious-Roman.otf');
+}
+
+h1 {
+	font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+	font-size: 24px;
+	font-style: normal;
+	font-variant: normal;
+	font-weight: 500;
+	line-height: 26.4px;
+}
+
+h3 {
+	font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+	font-size: 18px;
+	font-style: normal;
+	font-variant: normal;
+	font-weight: 400;
+	line-height: 15.4px;
+  color: grey;
+}
+
+h2 {
+  font-size: 12px;
+}
+
+header {
+  max-width: 310px;
+}
+
+header hr {
+  margin: 0 50px 0 50px;
+  /*border-color: grey;*/
+}
+
+header {
+    position: absolute;
+    top: 30%;
+    right: 58%;
+    margin-top: -100px;
+    /*width: 240px;*/
+    text-align: center;
+    padding-top: 99px;
+}
+
+.title {
+  opacity: 0;
+  text-align: center;
+}
+
+.soc {
+  display: inline-block;
+  font-size: 0;
+  list-style: none;
+  margin: 0;
+  padding: 28px;
+  /*padding: 4.8rem;*/
+  text-align: center;
+}
+
+.soc li {
+  display: inline-block;
+  float: left;
+  background-color: #465D6D;
+  margin: 12px;
+  margin: 1.2rem;
+  border-radius: 3px;
+}
+
+path {
+  fill: white;
+}
+
+ul.soc {
+  display: inline-flex;
+  padding: 0;
+}
+
+.soc a, .soc svg {
+  display: inline-block;
+}
+
+.soc a {
+  position: relative;
+  height: 2rem;
+  width: 2rem;
+}
+
+.soc svg {
+height: 100%;
+width: 100%;
+}
+
+.soc em {
+    font-size: 14px;
+    line-height: 1.5;
+    margin-top: -.75em;
+    position: absolute;
+    text-align: center;
+    top: 50%;
+    right: 0;
+    bottom: 0;
+    left: 0;
+}
+
+
+/*START OF CONTENT CSS*/
+
+#content {
+    position: absolute;
+    left: 50%;
+    width: 50%;
+    top: 8%;
+    right: 58%;
+}
+
+section {
+  display: block;
+
+  /*margin-top: -100px;*/
+}
+
+
+
 div {
   position: relative;
-  /*border: 1px solid black;*/
 }
 div div { position: absolute; top: 0; left: 0; }
 
@@ -40,10 +166,6 @@ div div { position: absolute; top: 0; left: 0; }
   stroke: steelblue;
   stroke-width: 3;
 }
-
-
-
-
 
 /*copied*/
 
@@ -90,7 +212,6 @@ path.area {
 .yAxis line {
     fill: none;
     stroke: black;
-    /*shape-rendering: crispEdges;*/
 }
 
 .xAxis text,
