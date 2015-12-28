@@ -60,6 +60,22 @@ d3.select(".title")
   .duration(500)
   .style("opacity", "1")
 
-  // .append("hr")
-  // .transition()
-  // .append("text", "kjahsdgfk")
+d3.select("#section1")
+  .transition()
+  .delay(1650)
+  .duration(500)
+  .style("opacity", "1")
+
+
+d3.select("#section2")
+  .transition()
+  .delay(1800)
+  .duration(500)
+  .style("opacity", "1")
+
+
+d3.select("#section3")
+  .transition()
+  .delay(1950)
+  .duration(500)
+  .style("opacity", "1")
