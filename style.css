@@ -187,6 +187,19 @@ div div { position: absolute; top: 0; left: 0; }
   width: 700px;
 }
 
+/*ARTISTS*/
+
+.node {
+    fill: #ccf;
+    stroke: #fff;
+    stroke-width: 2px;
+}
+
+.link {
+    stroke: #777;
+    stroke-width: 2px;
+}
+
 /*Drawing Line*/
 
 .trig path,.trig circle,.trig line{
