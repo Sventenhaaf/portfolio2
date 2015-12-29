@@ -20,12 +20,13 @@
       (falsely) assuming that every iteration takes exactly the same amount of
       time, the Quicksort algorithm nearly always wins.
     </h3>
+    <h3>Scroll down to play around with the array size and speed</h3>
   </div>
   <div class="row">
     <hr/>
   </div>
   <div class="row">
-    <div class="col-xs-12 col-sm-12 col-md-3">
+    <div class="col-xs-12 col-sm-12 col-md-4">
       <h2>Bubble Sort</h2>
       <h3>This animation represents a bubble sort algorithm. It iterates over
         the array, comparing two items, and swaps them if the left-hand item is
@@ -33,27 +34,14 @@
       </h3>
       <h3><a href="#">Time complexity</a> is O(n<sup>2</sup>).</h3>
     </div>
-    <div class="col-xs-12 col-sm-12 col-md-6" id="bubblesort"></div>
-    <div class="col-xs-12 col-sm-12 col-md-3">
-      <h2>Knobs</h2>
-      <form>
-        Array Size: <span id="bsarray-value">…</span><br>
-        5 <input type="range" name="points" min="5" max="50" value="10" id="bsarraysize"> 50<br><br>
-        Calculation Speed: <span id="bsspeed-value">…</span><br>
-        20<input type="range" name="points" min="20" max="1000" value="250" id="bsspeed">1000<br><br>
-        <h3><input
-          name="runButton"
-          type="button"
-          value="Run"
-          onclick="startAnimation()"></h3>
-      </form>
-    </div>
+    <div class="col-xs-12 col-sm-12 col-md-8" id="bubblesort"></div>
+
   </div>
   <div class="row">
     <hr/>
   </div>
   <div class="row">
-    <div class="col-xs-12 col-sm-12 col-md-3">
+    <div class="col-xs-12 col-sm-12 col-md-4">
       <h2>Quicksort</h2>
       <h3>This animation represents a quicksort algorithm. It takes a pivot,
         puts all smaller items to its left and all bigger items to its right.
@@ -63,13 +51,31 @@
 
 
   </div>
-  <div class="col-xs-12 col-sm-12 col-md-6" id="quicksort"></div>
-  <div class="col-xs-12 col-sm-12 col-md-3">
-    <h2>Knobs</h2>
-    <h3>Here will come knobs, to play
-    around with the array size, animation speed etc.</h3></div>
-  </div>
+  <div class="col-xs-12 col-sm-12 col-md-8" id="quicksort"></div>
 
+  </div>
+  <div class="row">
+    <hr/>
+  </div>
+  <div class="row">
+    <div class="col-xs-12 col-sm-12 col-md-6">
+      <br>
+      <form>
+        Array Size: <span id="arrayvalue">…</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        5 <input type="range" name="points" min="5" max="50" value="10" id="arraysize"> 50 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        Calculation Speed: <span id="speed-value">…</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        20<input type="range" name="points" min="20" max="1000" value="250" id="speed">1000
+
+      </form>
+    </div>
+    <div class="col-xs-12 col-sm-12 col-md-6">
+      <h3><input
+        name="runButton"
+        type="button"
+        value="Run"
+        onclick="startAnimation()"></h3>
+    </div>
+  </div>
 
   <!-- D3 LIBRARY -->
   <script src="_/d3.min.js"></script>
@@ -77,7 +83,7 @@
 
   <!-- SORTING JS -->
   <script src="bubblesort.js"></script>
-  <script src="quicksort.js"></script>
+  <!-- <script src="quicksort.js"></script> -->
 
 </body>
 </html>

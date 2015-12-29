@@ -1,14 +1,16 @@
-(function() {
+function animateQuickSort(arrSize, calcTime) {
+  d3.select("#bubblesort").html("");
 
   var arr = [];
-  for (var idxx = 0; idxx < 10; idxx++) { arr.push(idxx); }
 
-  for(var j, x, i = arr.length; i; j = Math.floor(Math.random() * i),
-    x = arr[--i], arr[i] = arr[j], arr[j] = x);
+    for (var idxx = 0; idxx < arrSize; idxx++) { arr.push(idxx); }
+
+    for(var j, x, i = arr.length; i; j = Math.floor(Math.random() * i),
+      x = arr[--i], arr[i] = arr[j], arr[j] = x);
   // Using D3 making an update function for a step in sorting algorithm
   var width = 700,
-      height = 250,
-      stepDuration = 250;
+      height = 165,
+      stepDuration = newCalculationTime;
   if (Math.max.apply(null, arr) < 10) {
     var charSize = Math.min(width / (1.5 * arr.length), 48);
     var dx = charSize;
@@ -152,4 +154,4 @@
     update(sorted, [sorted.length+1, sorted.length+2]);
   });
 
-})();
+};
