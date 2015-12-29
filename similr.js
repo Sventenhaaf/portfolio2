@@ -1,95 +1,200 @@
-var currentArtist;
+var graph;
+    function myGraph() {
+
+        // Add and remove elements on the graph object
+        this.addNode = function (id) {
+            nodes.push({"id": id});
+            update();
+        };
+
+        this.removeNode = function (id) {
+            var i = 0;
+            var n = findNode(id);
+            while (i < links.length) {
+                if ((links[i]['source'] == n) || (links[i]['target'] == n)) {
+                    links.splice(i, 1);
+                }
+                else i++;
+            }
+            nodes.splice(findNodeIndex(id), 1);
+            update();
+        };
+
+        this.removeLink = function (source, target) {
+            for (var i = 0; i < links.length; i++) {
+                if (links[i].source.id == source && links[i].target.id == target) {
+                    links.splice(i, 1);
+                    break;
+                }
+            }
+            update();
+        };
+
+        this.removeallLinks = function () {
+            links.splice(0, links.length);
+            update();
+        };
+
+        this.removeAllNodes = function () {
+            nodes.splice(0, links.length);
+            update();
+        };
+
+        this.addLink = function (source, target, value) {
+            links.push({"source": findNode(source), "target": findNode(target), "value": value});
+            update();
+        };
+
+        var findNode = function (id) {
+            for (var i in nodes) {
+                if (nodes[i]["id"] === id) return nodes[i];
+            }
+            ;
+        };
+
+        var findNodeIndex = function (id) {
+            for (var i = 0; i < nodes.length; i++) {
+                if (nodes[i].id == id) {
+                    return i;
+                }
+            }
+            ;
+        };
+
+        // set up the D3 visualisation in the specified element
+        var w = 960,
+                h = 450;
+
+        var color = d3.scale.category10();
+
+        var vis = d3.select("#testartist")
+                .append("svg:svg")
+                .attr("width", w)
+                .attr("height", h)
+                .attr("id", "svg")
+                .attr("pointer-events", "all")
+                .attr("viewBox", "0 0 " + w + " " + h)
+                .attr("perserveAspectRatio", "xMinYMid")
+                .append('svg:g');
+
+        var force = d3.layout.force();
+
+        var nodes = force.nodes(),
+                links = force.links();
+
+        var update = function () {
+            var link = vis.selectAll("line")
+                    .data(links, function (d) {
+                        return d.source.id + "-" + d.target.id;
+                    });
+
+            link.enter().append("line")
+                    .attr("id", function (d) {
+                        return d.source.id + "-" + d.target.id;
+                    })
+                    .attr("stroke-width", function (d) {
+                        return d.value / 10;
+                    })
+                    .attr("class", "link");
+            link.append("title")
+                    .text(function (d) {
+                        return d.value;
+                    });
+            link.exit().remove();
+
+            var node = vis.selectAll("g.node")
+                    .data(nodes, function (d) {
+                        return d.id;
+                    });
+
+            var nodeEnter = node.enter().append("g")
+                    .attr("class", "node")
+                    .call(force.drag);
+
+            nodeEnter.append("svg:circle")
+                    .attr("r", 12)
+                    .attr("id", function (d) {
+                        return "Node;" + d.id;
+                    })
+                    .attr("class", "nodeStrokeClass")
+                    .attr("fill", function(d) { return color(d.id); });
+
+            nodeEnter.append("svg:text")
+                    .attr("class", "textClass")
+                    .attr("x", 14)
+                    .attr("y", ".31em")
+                    .style("stroke", "black")
+                    .style("stroke-width", ".5")
+                    .text(function (d) {
+                        return d.id;
+                    });
+
+            node.exit().remove();
+
+            force.on("tick", function () {
+
+                node.attr("transform", function (d) {
+                    return "translate(" + d.x + "," + d.y + ")";
+                });
+
+                link.attr("x1", function (d) {
+                    return d.source.x;
+                })
+                        .attr("y1", function (d) {
+                            return d.source.y;
+                        })
+                        .attr("x2", function (d) {
+                            return d.target.x;
+                        })
+                        .attr("y2", function (d) {
+                            return d.target.y;
+                        });
+            });
+
+            // Restart the force layout.
+            force
+                    .gravity(.01)
+                    .charge(-80000)
+                    .friction(0)
+                    .linkDistance( function(d) { return d.value * 10 } )
+                    .size([w, h])
+                    .start();
+        };
+
+        // Make it all go
+        update();
+    }
+
+    function drawGraph() {
+
+        graph = new myGraph("#svgdiv");
 
 
+        graph.addNode('Sophia');
+        graph.addNode('Daniel');
+        graph.addNode('Ryan');
+        graph.addLink('Sophia', 'Ryan', '20');
+        graph.addLink('Daniel', 'Ryan', '20');
+        keepNodesOnTop();
+    }
+
+    drawGraph();
+
+    // because of the way the network is created, nodes are created first, and links second,
+    // so the lines were on top of the nodes, this just reorders the DOM to put the svg:g on top
+    function keepNodesOnTop() {
+        $(".nodeStrokeClass").each(function( index ) {
+            var gnode = this.parentNode;
+            gnode.parentNode.appendChild(gnode);
+        });
+    }
+    function addNodes() {
+        d3.select("svg")
+                .remove();
+         drawGraph();
+    }
 
 
-
-// force layout code
-
-// setup
-var width = 640,
-    height = 480;
-var nodes = [   { num: 1 },
-                { num: 2 },
-                { num: 3 },
-                { num: 4 },
-                { num: 5 },
-                { num: 6 },
-                { num: 7 },
-                { num: 8 },
-                { num: 9 },
-                { num: 10 },
-                { num: 11 },
-                { num: 12 },
-                { num: 13 },
-                { num: 14 },
-                { num: 15 },
-                { num: 16 },
-                { num: 17 }
-            ];
-var links = [
-    { source: 0, target: 1 },
-    { source: 0, target: 2 },
-    { source: 0, target: 3 },
-    { source: 0, target: 4 },
-    { source: 0, target: 5 },
-    { source: 0, target: 6 },
-    { source: 0, target: 7 },
-    { source: 0, target: 8 },
-    { source: 0, target: 9 },
-    { source: 1, target: 8},
-    { source: 1, target: 9},
-    { source: 1, target: 10},
-    { source: 1, target: 11},
-    { source: 1, target: 12},
-    { source: 1, target: 13},
-    { source: 1, target: 14},
-    { source: 1, target: 15},
-    { source: 1, target: 16},
-];
-// code
-var svg = d3.select('#testartist').append('svg')
-    .attr('width', width)
-    .attr('height', height);
-var force = d3.layout.force()
-    .size([width, height])
-    .nodes(nodes)
-    .links(links);
-force.linkDistance(20);
-
-force.charge(-3000);
-
-// draw links
-var link = svg.selectAll('.link')
-    .data(links)
-    .enter().append('line')
-    .attr('class', 'link');
-
-// draw nodes
-var node = svg.selectAll('.node')
-    .data(nodes)
-    .enter().append('circle')
-    .attr('class', 'node');
-
-
-function updateNodes() {
-
-  // update
-  node.attr('r', width/50)
-      .attr('cx', function(d) { return d.x; })
-      .attr('cy', function(d) { return d.y; })
-      .style("fill", function(d) { if (d.num === 1) return "steelblue"; })
-  link.attr('x1', function(d) { return d.source.x; })
-      .attr('y1', function(d) { return d.source.y; })
-      .attr('x2', function(d) { return d.target.x; })
-      .attr('y2', function(d) { return d.target.y; });
-}
-
-force.on('tick', function() {
-    updateNodes();
-});
-
-force.start();
 
 
 
@@ -160,17 +265,191 @@ getSimilar("The+Beatles", function(data) {
 
 function plot() {
   getSimilar("The+Beatles", function(data) {
-    data.similarartists.artist.forEach(function(artist) {
-      nodes.push(artist);
-    })
+    console.log(data);
   })
-  console.log('red square pushed');
-  console.log(nodes);
-  force.on('tick', function() {
-      updateNodes();
-  });
-  force.start();
 }
 
 
-// replace the beatles with clicked artist
+// ==========
+// ---
+// ==========
+// ---
+// ==========
+// ---
+// ==========
+// ---
+// ==========
+// ---
+// ==========
+// ---
+// ==========
+// ---
+// ==========
+// ---
+// ==========
+// ---
+// ==========
+// ---
+// ==========
+// ---
+// ==========
+// ---
+// ==========
+// ---
+// ==========
+// ---
+// ==========
+// ---
+// ==========
+// ---
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// OLD CODE
+
+//
+// var currentArtist;
+//
+// // setup
+// var width = 960,
+//     height = 500;
+// var nodes = [];
+// var links = [];
+//
+// var force = d3.layout.force()
+//   .nodes(nodes)
+//   .links(links)
+//   .charge(-400)
+//   .linkDistance(120)
+//   .size([width, height])
+//   .on("tick", tick);
+//
+// var svg = d3.select("#testartist").append("svg")
+//   .attr("width", width)
+//   .attr("height", height);
+//
+// var node = svg.selectAll(".node"),
+//     link = svg.selectAll(".link");
+//
+// function addNode(id) {
+//   nodes.push({ "id": id });
+//   update();
+// }
+//
+// addNodesLinks();
+//
+// function start() {
+//   link = link.data(force.links(), function(d) { return d.source.id + "-" + d.target.id; });
+//   link.enter().insert("line", ".node").attr("class", "link");
+//   link.exit().remove();
+//
+//   node = node.data(force.nodes(), function(d) { return d.id;});
+//   node.enter().append("circle").attr("class", function(d) { return "node " + d.id; }).attr("r", 8);
+//   node.exit().remove();
+//
+//   force.start();
+// }
+//
+// function tick() {
+//   node.attr("cx", function(d) { return d.x; })
+//       .attr("cy", function(d) { return d.y; })
+//
+//   link.attr("x1", function(d) { return d.source.x; })
+//       .attr("y1", function(d) { return d.source.y; })
+//       .attr("x2", function(d) { return d.target.x; })
+//       .attr("y2", function(d) { return d.target.y; });
+// }
+
+
+
+//===
+//====
+//===
+//====
+//===
+//====
+//===
+//====
+//===
+//====
+//===
+//====
+//===
+//====
+//===
+//====
+//===
+//====
+//===
+//====
+//===
+//====
+//===
+//====
+//===
+//====
+
+// OLDER CODE
+
+//
+//
+// // code
+// var svg = d3.select('#testartist').append('svg')
+//     .attr('width', width)
+//     .attr('height', height);
+// var force = d3.layout.force()
+//     .size([width, height])
+//     .nodes(nodes)
+//     .links(links);
+// force.linkDistance(20);
+//
+// force.charge(-3000);
+//
+// // draw links
+// var link = svg.selectAll('.link')
+//     .data(links)
+//     .enter().append('line')
+//     .attr('class', 'link');
+//
+// // draw nodes
+// var node = svg.selectAll('.node')
+//     .data(nodes)
+//     .enter().append('circle')
+//     .attr('class', 'node');
+//
+//
+// function updateNodes() {
+//
+//   // update
+//   node.attr('r', width/50)
+//       .attr('cx', function(d) { return d.x; })
+//       .attr('cy', function(d) { return d.y; })
+//       .style("fill", function(d) { if (d.num === 1) return "steelblue"; })
+//   link.attr('x1', function(d) { return d.source.x; })
+//       .attr('y1', function(d) { return d.source.y; })
+//       .attr('x2', function(d) { return d.target.x; })
+//       .attr('y2', function(d) { return d.target.y; });
+// }
+//
+// force.on('tick', function() {
+//     updateNodes();
+// });
+//
+// force.start();
+//
+//
+//
+//
+//

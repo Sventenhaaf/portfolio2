@@ -189,6 +189,11 @@ div div { position: absolute; top: 0; left: 0; }
 
 /*ARTISTS*/
 
+.textClass {
+  fill: black;
+  color: black;
+}
+
 .node {
     fill: #ccf;
     stroke: #fff;
