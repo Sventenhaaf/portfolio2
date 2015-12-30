@@ -65,9 +65,7 @@ function myGraph() {
 
     var findNodeIndex = function (id) {
         for (var i = 0; i < nodes.length; i++) {
-            if (nodes[i].id == id) {
-                return i;
-            }
+            if (nodes[i].id == id) { return i; }
         }
         ;
     };
@@ -120,23 +118,8 @@ function myGraph() {
 
         var nodeEnter = node.enter().append("g")
                 .attr("class", "node")
-                .on("click", function(d) {
-                  console.log(d)
-                  // currentArtist = d.name;
-                  // plot();
-                  console.log(d.name)
-                  getInfo(d.name, function(data) {
-                    currentArtist = data.artist;
-                    graph.addNode(currentArtist.id, currentArtist.name);
-                    $('#artistInfo').html(
-                      data.artist.name +
-                      " | " +
-                      data.artist.bio.summary.split("").splice(0, 40).join("") +
-                      " ..."
-                    );
-                    plot();
-                  });
-                })
+                .on("click", function(d) { plot(d) });
+                //
                 // .call(force.drag);
 
         nodeEnter.append("svg:circle")
@@ -214,12 +197,12 @@ function addNodes() {
 var graph = new myGraph("#svgdiv");
 var currentArtist;
 
-function getInfo(artist, callback) {
+function getInfo(artistId, callback) {
   $.ajax({
           type : 'POST',
           url : 'https://ws.audioscrobbler.com/2.0/',
           data : 'method=artist.getInfo&' +
-                 'artist=' + artist + '&' +
+                 'mbid=' + artistId + '&' +
                  'api_key=ee45ef94fff5729caec4b77319d3b316&' +
                  'format=json',
           dataType : 'jsonp',
@@ -230,12 +213,12 @@ function getInfo(artist, callback) {
       });
 }
 
-function getSimilar(artist, callback) {
+function getSimilar(artistId, callback) {
   $.ajax({
           type : 'POST',
           url : 'https://ws.audioscrobbler.com/2.0/',
           data : 'method=artist.getSimilar&' +
-                 'artist=' + artist + '&' +
+                 'mbid=' + artistId + '&' +
                  'limit=20&' +
                  'api_key=ee45ef94fff5729caec4b77319d3b316&' +
                  'format=json',
@@ -252,14 +235,14 @@ function plotArtist(element, index) {
     .append("p")
     .html(element.name)
     .on("click", function() {
-      getSimilar(element.name, function(data) {
+      getSimilar(element.id, function(data) {
         d3.select("#cloud").html("");
         data.similarartists.artist.forEach(plotArtist)
       })
   })
 }
 
-getInfo("The Beatles", function(data) {
+getInfo("b10bbbfc-cf9e-42e0-be17-e2c3e1d2600d", function(data) {
   currentArtist = data.artist;
   graph.addNode(currentArtist.mbid, currentArtist.name);
   $('#artistInfo').html(
@@ -270,14 +253,24 @@ getInfo("The Beatles", function(data) {
   );
 });
 
-getSimilar("The Beatles", function(data) {
+getSimilar("b10bbbfc-cf9e-42e0-be17-e2c3e1d2600d", function(data) {
   d3.select("#cloud").html("");
   data.similarartists.artist.forEach(plotArtist)
 });
 
 
-function plot() {
-  getSimilar(currentArtist.name, function(data) {
+function plot(d) {
+  getInfo(d.id, function(data){
+    currentArtist = data.artist;
+    $('#artistInfo').html(
+      data.artist.name +
+      " | " +
+      data.artist.bio.summary.split("").splice(0, 40).join("") +
+      " ..."
+    );
+  })
+
+  getSimilar(d.id, function(data) {
     data.similarartists.artist.forEach(function(artist) {
       graph.addNode(artist.mbid, artist.name);
       graph.addLink(currentArtist.mbid, artist.mbid, 10)
@@ -285,3 +278,19 @@ function plot() {
     })
   })
 }
+
+
+//   console.log(d)
+//   console.log(d.name)
+//   getInfo(d.id, function(data) {
+//     currentArtist = data.artist;
+//     graph.addNode(currentArtist.id, currentArtist.name);
+//     $('#artistInfo').html(
+//       data.artist.name +
+//       " | " +
+//       data.artist.bio.summary.split("").splice(0, 40).join("") +
+//       " ..."
+//     );
+//     plot();
+//   });
+// })
