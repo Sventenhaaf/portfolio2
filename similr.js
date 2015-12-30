@@ -34,9 +34,19 @@ function myGraph() {
         update();
     };
 
+    this.removeAllButMainLinks = function () {
+        // links.splice(0, links.length);
+        // update();
+    };
+
     this.removeAllNodes = function () {
         nodes.splice(0, links.length);
         update();
+    };
+
+    this.removeAllButMainNodes = function () {
+        // nodes.splice(0, links.length);
+        // update();
     };
 
     this.addLink = function (source, target, value) {
@@ -111,11 +121,13 @@ function myGraph() {
         var nodeEnter = node.enter().append("g")
                 .attr("class", "node")
                 .on("click", function(d) {
+                  console.log(d)
                   // currentArtist = d.name;
                   // plot();
+                  console.log(d.name)
                   getInfo(d.name, function(data) {
                     currentArtist = data.artist;
-                    graph.addNode(currentArtist.mbid, currentArtist.name);
+                    graph.addNode(currentArtist.id, currentArtist.name);
                     $('#artistInfo').html(
                       data.artist.name +
                       " | " +
@@ -171,7 +183,7 @@ function myGraph() {
         force
                 .gravity(1.6)
                 .charge(-1300)
-                // .friction(-1)
+                // .friction(.1)
                 .linkDistance( function(d) { return d.value * 10 } )
                 .size([w, h])
                 .start();
@@ -247,7 +259,7 @@ function plotArtist(element, index) {
   })
 }
 
-getInfo("The+Beatles", function(data) {
+getInfo("The Beatles", function(data) {
   currentArtist = data.artist;
   graph.addNode(currentArtist.mbid, currentArtist.name);
   $('#artistInfo').html(
@@ -258,7 +270,7 @@ getInfo("The+Beatles", function(data) {
   );
 });
 
-getSimilar("The+Beatles", function(data) {
+getSimilar("The Beatles", function(data) {
   d3.select("#cloud").html("");
   data.similarartists.artist.forEach(plotArtist)
 });
