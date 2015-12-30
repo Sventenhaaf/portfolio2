@@ -1,7 +1,7 @@
 var newArrSize = 10;
-var newCalculationTime = 250;
-animateBubbleSort(newArrSize, newCalculationTime);
-animateQuickSort(newArrSize, newCalculationTime);
+var newCalculationTime = 750;
+animateBubbleSort(newArrSize, newCalculationTime / 3);
+animateQuickSort(newArrSize, newCalculationTime / 3);
 
 function animateQuickSort(arrSize, calcTime) {
   var arr = [];
@@ -55,7 +55,6 @@ function animateQuickSort(arrSize, calcTime) {
   // -- Quicksort code
   var indicesOld = [0, 1];
   var indicesNew = [0, 1];
-
   var stack = [arr];
   var sorted = [];
   var intervalId = 0;
@@ -65,6 +64,8 @@ function animateQuickSort(arrSize, calcTime) {
   var left = [], right = [];
   var side;
   var time = 0;
+  var tl;
+
 
   function qsort(arr, ret) {
       intervalId = setInterval(function() {
@@ -84,7 +85,8 @@ function animateQuickSort(arrSize, calcTime) {
           }
           tot.push(pivot);
           tot = tot.concat(right);
-          if (tl != 1 && i < tl) { indicesNew[1] = tot.length; }
+          if (tl != 1 && i < tl) {
+            indicesNew[1] = tot.length; }
           tot = tot.concat(temp.slice(i));
           for (var id = stack.length - 1; id >= 0; id--) {
             tot = tot.concat(stack[id]);
@@ -145,7 +147,6 @@ function animateQuickSort(arrSize, calcTime) {
         }
       }, time);
   }
-
   qsort(arr, function(sorted) {
     update(sorted, [sorted.length+1, sorted.length+2]);
   });
@@ -239,21 +240,21 @@ d3.select("#speed").on("input", function() {
   updateSpeedText(+this.value);
 });
 // Initial starting text
-updateSpeedText(250);
+updateSpeedText(750);
 
 // update the elements
 function updateSpeedText(speed) {
   // adjust the text on the range slider
   d3.select("#speed-value").text(speed);
   d3.select("#speed").property("value", speed);
-  newSpeed = speed;
+  // newSpeed = speed;
 }
 // when the input range changes update the text
 d3.select("#speed").on("input", function() {
   updatespeed(+this.value);
 });
 // Initial starting text
-updatespeed(250);
+updatespeed(750);
 // update the elements
 function updatespeed(calcTime) {
   // adjust the text on the range slider
@@ -264,6 +265,6 @@ function updatespeed(calcTime) {
 function startAnimation() {
   d3.select("#quicksort").html("");
   d3.select("#bubblesort").html("");
-  animateBubbleSort(newArrSize, newCalculationTime);
-  animateQuickSort(newArrSize, newCalculationTime);
+  animateBubbleSort(newArrSize, newCalculationTime / 3);
+  animateQuickSort(newArrSize, newCalculationTime / 3);
 }

@@ -6,7 +6,7 @@ var stiffness   = 390;   // spring stiffness [kg/s^2]
 var damping     = 10;    // system damping   [kg/s]
 
 // External force settings
-var fMagnitude  = 0.4;   // Ext force Amplitude      [N]
+var fMagnitude  = 0;   // Ext force Amplitude      [N]
 var frequency   = 1.51;   // Ext force frequency      [Hz]
 
 // Representation settings
