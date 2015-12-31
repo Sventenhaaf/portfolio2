@@ -2,9 +2,15 @@ function myGraph() {
 
     // Add and remove elements on the graph object
     this.addNode = function (id, name) {
+      if (isNew(id, name)) {
         nodes.push({"id": id, "name": name});
         update();
+      }
     };
+
+    this.addClicked = function(id) {
+      findNode(id).clicked = true;
+    }
 
     this.removeNode = function (id) {
         var i = 0;
@@ -40,13 +46,30 @@ function myGraph() {
     };
 
     this.removeAllNodes = function () {
-        nodes.splice(0, links.length);
+      nodes.splice(0, links.length);
         update();
     };
 
-    this.removeAllButMainNodes = function () {
-        // nodes.splice(0, links.length);
-        // update();
+    this.removeAllButClicked = function () {
+      var i = nodes.length - 1;
+      var id, j;
+      while (i >= 0) {
+        id = nodes[i].id;
+        if (!nodes[i].clicked) {
+          j = 0;
+          while (j < links.length) {
+            console.log(id, links[j])
+            if (links[j]['source'].id == id || links[j]['target'].id == id) {
+              console.log('links removed')
+              links.splice(j, 1)
+            }
+            j++;
+          }
+          nodes.splice(i, 1)
+        }
+        i--
+      }
+      update();
     };
 
     this.addLink = function (source, target, value) {
@@ -54,7 +77,8 @@ function myGraph() {
         update();
     };
 
-    this.nodes = function(i) { return nodes; }
+    this.nodes = function() { return nodes; }
+    this.links = function() { return links; }
 
     var findNode = function (id) {
         for (var i in nodes) {
@@ -62,6 +86,15 @@ function myGraph() {
         }
         ;
     };
+
+    var isNew = function (id, name) {
+      for (var i = 0; i < nodes.length; i++) {
+        if (nodes[i].id == id && nodes[i].name == name) {
+          return false;
+        }
+      }
+      return true;
+    }
 
     var findNodeIndex = function (id) {
         for (var i = 0; i < nodes.length; i++) {
@@ -270,27 +303,14 @@ function plot(d) {
     );
   })
 
+  graph.addClicked(d.id);
+  graph.removeAllButClicked();
+
   getSimilar(d.id, function(data) {
     data.similarartists.artist.forEach(function(artist) {
       graph.addNode(artist.mbid, artist.name);
-      graph.addLink(currentArtist.mbid, artist.mbid, 10)
+      graph.addLink(d.id, artist.mbid, 10)
       keepNodesOnTop();
     })
   })
 }
-
-
-//   console.log(d)
-//   console.log(d.name)
-//   getInfo(d.id, function(data) {
-//     currentArtist = data.artist;
-//     graph.addNode(currentArtist.id, currentArtist.name);
-//     $('#artistInfo').html(
-//       data.artist.name +
-//       " | " +
-//       data.artist.bio.summary.split("").splice(0, 40).join("") +
-//       " ..."
-//     );
-//     plot();
-//   });
-// })
