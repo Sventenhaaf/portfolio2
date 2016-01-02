@@ -194,6 +194,33 @@ div div { position: absolute; top: 0; left: 0; }
   color: black;
 }
 
+#wrapper {
+  max-width:    960px;
+  display:      block;
+  margin-left:  auto;
+  margin-right: auto;
+  text-align:   center;
+}
+
+/*#artistinfo {
+  height: 150px;
+  position: absolute;
+}*/
+
+#testartist {
+  position: relative;
+  /*background-color: red;*/
+}
+
+body {
+  font-family: arial;
+}
+
+/*svg {
+  background-color: red;
+}*/
+
+
 .node {
     fill: #ccf;
     stroke: #fff;

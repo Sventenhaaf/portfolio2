@@ -40,34 +40,25 @@ function myGraph() {
         update();
     };
 
-    this.removeAllButMainLinks = function () {
-        // links.splice(0, links.length);
-        // update();
-    };
-
     this.removeAllNodes = function () {
       nodes.splice(0, links.length);
         update();
     };
 
-    this.removeAllButClicked = function () {
-      var i = nodes.length - 1;
-      var id, j;
-      while (i >= 0) {
-        id = nodes[i].id;
-        if (!nodes[i].clicked) {
-          j = 0;
-          while (j < links.length) {
-            console.log(id, links[j])
-            if (links[j]['source'].id == id || links[j]['target'].id == id) {
-              console.log('links removed')
-              links.splice(j, 1)
-            }
-            j++;
-          }
-          nodes.splice(i, 1)
+    this.removeAllButClicked = function (newArtists) {
+      for (var i = nodes.length - 1; i >= 0; i--) {
+        if (!nodes[i].clicked && !includes(newArtists, nodes[i].id)) {
+          nodes.splice(i, 1);
         }
-        i--
+      }
+
+      for (var i = links.length - 1; i >= 0; i--) {
+        if (
+          links[i]['source'].clicked && includes(newArtists, links[i]['target'].id) ||
+          links[i]['target'].clicked && includes(newArtists, links[i]['source'].id) ||
+          links[i]['source'].clicked && links[i]['target'].clicked
+        ) {}
+        else { links.splice(i, 1); }
       }
       update();
     };
@@ -86,6 +77,13 @@ function myGraph() {
         }
         ;
     };
+
+    var includes = function(array, element) {
+      for (var i = 0; i < array.length; i++) {
+        if (array[i] === element) return true;
+      }
+      return false;
+    }
 
     var isNew = function (id, name) {
       for (var i = 0; i < nodes.length; i++) {
@@ -176,7 +174,7 @@ function myGraph() {
         node.exit().remove();
 
         force.on("tick", function () {
-
+          // console.log(node)
             node.attr("transform", function (d) {
                 return "translate(" + d.x + "," + d.y + ")";
             });
@@ -197,8 +195,8 @@ function myGraph() {
 
         // Restart the force layout.
         force
-                .gravity(1.6)
-                .charge(-1300)
+                .gravity(2.6)
+                .charge(-9300)
                 // .friction(.1)
                 .linkDistance( function(d) { return d.value * 10 } )
                 .size([w, h])
@@ -278,7 +276,7 @@ function plotArtist(element, index) {
 getInfo("b10bbbfc-cf9e-42e0-be17-e2c3e1d2600d", function(data) {
   currentArtist = data.artist;
   graph.addNode(currentArtist.mbid, currentArtist.name);
-  $('#artistInfo').html(
+  $('#name').html(
     data.artist.name +
     " | " +
     data.artist.bio.summary.split("").splice(0, 40).join("") +
@@ -295,21 +293,23 @@ getSimilar("b10bbbfc-cf9e-42e0-be17-e2c3e1d2600d", function(data) {
 function plot(d) {
   getInfo(d.id, function(data){
     currentArtist = data.artist;
-    $('#artistInfo').html(
+    $('#name').html(
       data.artist.name +
       " | " +
       data.artist.bio.summary.split("").splice(0, 40).join("") +
       " ..."
     );
   })
-
-  graph.addClicked(d.id);
-  graph.removeAllButClicked();
-
   getSimilar(d.id, function(data) {
+    graph.addClicked(d.id);
+    var newArtists = [];
+    data.similarartists.artist.forEach(function(artist) {
+      newArtists.push(artist.mbid);
+    })
+    graph.removeAllButClicked(newArtists);
     data.similarartists.artist.forEach(function(artist) {
       graph.addNode(artist.mbid, artist.name);
-      graph.addLink(d.id, artist.mbid, 10)
+      graph.addLink(d.id, artist.mbid, 20)
       keepNodesOnTop();
     })
   })
