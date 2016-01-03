@@ -174,7 +174,6 @@ function myGraph() {
         node.exit().remove();
 
         force.on("tick", function () {
-          // console.log(node)
             node.attr("transform", function (d) {
                 return "translate(" + d.x + "," + d.y + ")";
             });
@@ -273,6 +272,7 @@ function plotArtist(element, index) {
   })
 }
 
+// start with the beatles
 getInfo("b10bbbfc-cf9e-42e0-be17-e2c3e1d2600d", function(data) {
   currentArtist = data.artist;
   graph.addNode(currentArtist.mbid, currentArtist.name);
@@ -282,22 +282,23 @@ getInfo("b10bbbfc-cf9e-42e0-be17-e2c3e1d2600d", function(data) {
     data.artist.bio.summary.split("").splice(0, 40).join("") +
     " ..."
   );
+  var newObj = {}
+  newObj.id = data.artist.mbid;
+  newObj.name = data.artist.name;
+  plot(newObj);
 });
-
-getSimilar("b10bbbfc-cf9e-42e0-be17-e2c3e1d2600d", function(data) {
-  d3.select("#cloud").html("");
-  data.similarartists.artist.forEach(plotArtist)
-});
-
 
 function plot(d) {
   getInfo(d.id, function(data){
     currentArtist = data.artist;
     $('#name').html(
-      data.artist.name +
-      " | " +
-      data.artist.bio.summary.split("").splice(0, 40).join("") +
-      " ..."
+      data.artist.name
+    );
+    $('#picture').html(
+      "<img src=" + data.artist.image[2]["#text"] + ">"
+    );
+    $('#biography').html(
+      data.artist.bio.summary.split("").splice(0, 40).join("") + "..."
     );
   })
   getSimilar(d.id, function(data) {

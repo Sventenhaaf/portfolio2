@@ -143,13 +143,6 @@ width: 100%;
     right: 58%;
 }
 
-section {
-  display: block;
-  margin: 0 0 50px 0;
-  width: 250px;
-  /*margin-top: -100px;*/
-}
-
 #section1, #section2, #section3 {
   opacity: 0;
 }
@@ -194,32 +187,16 @@ div div { position: absolute; top: 0; left: 0; }
   color: black;
 }
 
-#wrapper {
+section {
   max-width:    960px;
-  display:      block;
-  margin-left:  auto;
-  margin-right: auto;
-  text-align:   center;
+  margin: 0 auto;
+  display: block;
 }
 
-/*#artistinfo {
-  height: 150px;
-  position: absolute;
-}*/
-
-#testartist {
-  position: relative;
-  /*background-color: red;*/
-}
 
 body {
   font-family: arial;
 }
-
-/*svg {
-  background-color: red;
-}*/
-
 
 .node {
     fill: #ccf;
